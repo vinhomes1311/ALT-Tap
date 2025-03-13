@@ -22,10 +22,14 @@ Uint32 momLookStartTime = 0;
 const Uint32 MOM_LOOK_DURATION = 1500;
 const float PROGRESS_INCREASE_RATE = 0.05f;
 bool mousePressed = false;
-
+bool isplayinggame;
 SDL_Texture* tuanTexture = nullptr;
+SDL_Texture* tuanChoi = nullptr;
 SDL_Texture* momTexture = nullptr;
 SDL_Texture* backgroundTexture = nullptr;
+SDL_Texture* tuanHoc = nullptr;
+
+
 
 SDL_Texture* LoadTexture(const char* filePath) {
     SDL_Surface* surface = IMG_Load(filePath);
@@ -46,8 +50,10 @@ void InitSDL() {
     srand(time(0));
 
     backgroundTexture = LoadTexture("room_background.png");
-    tuanTexture = LoadTexture("tuan_back.png");
+    tuanTexture = LoadTexture("TuanHocBai.png");
     momTexture = LoadTexture("mom_stern.png");
+    tuanChoi =LoadTexture("TuanChoiGame.png");
+    tuanHoc = LoadTexture("TuanHocBai.png");
 }
 
 void HandleEvents() {
@@ -66,10 +72,12 @@ void HandleEvents() {
 }
 
 void Update() {
+    isplayinggame = false;
     if (mousePressed) {
         progress += PROGRESS_INCREASE_RATE;
+        isplayinggame = true;
     }
-    if (!momLooking && rand() % 500 == 0) {
+    if (!momLooking && rand() % 200 == 0) {
         momLooking = true;
         momLookStartTime = SDL_GetTicks();
     }
@@ -82,7 +90,7 @@ void Update() {
             momLooking = false;
         }
     }
-    if (progress >= 100.0f) {
+    if (progress >= 150.0f) {
         cout << "NEXT LEVEL" << endl;
         running = false;
     }
@@ -93,8 +101,10 @@ void Render() {
     SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
 
     SDL_Rect tuanRect = {SCREEN_WIDTH / 2 - 75 - 40, SCREEN_HEIGHT - 275, TUAN_WIDTH, TUAN_HEIGHT};
-    SDL_RenderCopy(renderer, tuanTexture, NULL, &tuanRect);
-
+    if(isplayinggame)
+        SDL_RenderCopy(renderer, tuanChoi, NULL, &tuanRect);
+    else
+        SDL_RenderCopy(renderer, tuanHoc, NULL, &tuanRect);
     if (momLooking) {
         SDL_Rect momRect = {SCREEN_WIDTH - 180 - 40, SCREEN_HEIGHT - 275, MOM_WIDTH, MOM_HEIGHT};
         SDL_RenderCopy(renderer, momTexture, NULL, &momRect);
